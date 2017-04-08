@@ -58,7 +58,7 @@ module.exports = function (passport) {
                 return next(err);
             }
             if (!user) {
-                return res.status(202).send({status: 202, message: info.message});
+                return res.status(202).send({status: 202, message: info.message ? info.message : info});
             }
 
             req.logIn(user, function (err) {
@@ -70,24 +70,6 @@ module.exports = function (passport) {
 
             });
         })(req, res, next);
-    });
-
-    router.post('/forgot', (req, res, next) => {
-        var email = req.body.email;
-        if (!email) {
-            return res.send({status: 400, message: "Missing an email"});
-        }
-
-        models.User.find({where: {email: email}}).then(function (user) {
-            if (user) {
-                return res.send({status: 200, message: "please check your email..."});
-            } else {
-                return res.send({
-                    status: 202,
-                    message: "We don't have a user with that email, you can signup for an account!"
-                });
-            }
-        });
     });
 
     //user log out
