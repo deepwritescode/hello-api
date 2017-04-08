@@ -48,9 +48,9 @@ exports.addNewAccount = function (newData, callback) {
     ).then(function (user) {
         if (user) {
             if (user.username.toLocaleLowerCase() == newData.username.toLocaleLowerCase()) {
-                return callback('username-taken');
+                return callback("That username is already in use");
             } else if (user.email.toLocaleLowerCase() == newData.email.toLocaleLowerCase()) {
-                return callback('email-taken');
+                return callback("That email is already in use");
             }
 
         } else {
