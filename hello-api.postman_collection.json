@@ -1,0 +1,240 @@
+{
+  "variables": [],
+  "info": {
+    "name": "hello-api",
+    "_postman_id": "ff22906c-b245-48f0-c028-b0a0cf37e899",
+    "description": "testing endpoints for hello-api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Signup user",
+      "request": {
+        "url": "http://localhost:3000/auth/signup",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "ankit",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "password",
+              "value": "password",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "firstName",
+              "value": "Ankit",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "lastName",
+              "value": "Sheth",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "email",
+              "value": "ankit.s1213@gmail.com",
+              "type": "text",
+              "enabled": true
+            }
+          ]
+        },
+        "description": "Route to signup the user"
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "url": "http://localhost:3000/auth/login",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "ankit",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "password",
+              "value": "password",
+              "type": "text",
+              "enabled": true
+            }
+          ]
+        },
+        "description": "route to login the user, this will return a cookie in the header of the response"
+      },
+      "response": []
+    },
+    {
+      "name": "Check login",
+      "request": {
+        "url": "http://localhost:3000/auth/",
+        "method": "GET",
+        "header": [],
+        "body": {},
+        "description": "Route to check to see if the user is logged in"
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "url": "http://localhost:3000/auth/logout",
+        "method": "GET",
+        "header": [],
+        "body": {},
+        "description": "Route to logout the user from the app"
+      },
+      "response": []
+    },
+    {
+      "name": "Get cars",
+      "request": {
+        "url": "http://localhost:3000/cars",
+        "method": "GET",
+        "header": [],
+        "body": {},
+        "description": "route to get a list of cars that the user has saved"
+      },
+      "response": []
+    },
+    {
+      "name": "create car",
+      "request": {
+        "url": "http://localhost:3000/cars",
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "make",
+              "value": "Ferrari",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "model",
+              "value": "458",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "licensePlate",
+              "value": "DOPEAF",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "color",
+              "value": "Ferrari Red",
+              "type": "text",
+              "enabled": true
+            }
+          ]
+        },
+        "description": "gets a list of cars associated with the user"
+      },
+      "response": []
+    },
+    {
+      "name": "update car",
+      "request": {
+        "url": "http://localhost:3000/cars/2",
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded",
+            "description": ""
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "make",
+              "value": "Ferrari",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "model",
+              "value": "FF",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "licensePlate",
+              "value": "NiceAF",
+              "type": "text",
+              "enabled": true
+            },
+            {
+              "key": "color",
+              "value": "White",
+              "type": "text",
+              "enabled": true
+            }
+          ]
+        },
+        "description": "Updates the car information"
+      },
+      "response": []
+    },
+    {
+      "name": "get specific car",
+      "request": {
+        "url": "http://localhost:3000/cars/2",
+        "method": "GET",
+        "header": [],
+        "body": {},
+        "description": "Gets a car object at an id"
+      },
+      "response": []
+    },
+    {
+      "name": "delete car",
+      "request": {
+        "url": "http://localhost:3000/cars/2",
+        "method": "DELETE",
+        "header": [],
+        "body": {},
+        "description": "Deletes a car object"
+      },
+      "response": []
+    }
+  ]
+}
