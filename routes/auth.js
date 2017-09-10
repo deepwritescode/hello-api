@@ -1,85 +1,135 @@
 var express = require('express');
 var router = express.Router();
-var models = require('../models');
+const jwt = require('jsonwebtoken');
+const config = require('../config/jwt');
+const validator = require('../modules/validator');
+var AM = require('../modules/account-manager');
+const passport = require('passport');
+require('../config/passport')(passport);
 
-module.exports = function (passport) {
 
-    /**
-     * Use this route to check if the user is logged in
-     * */
-    router.get('/', function (req, res, next) {
-        var user = req.user;
+/**
+ * Use this route to check if the user is logged in
+ * */
+router.get('/', passport.authenticate('jwt', {session: false}), function (req, res) {
+    return res.send({user: req.user});
+});
 
-        if (user) {
-            return res.send({status: 200, message: "You're logged in", user: user});
+/**
+ * request that handles the login of the user
+ *
+ * in the post body include the following
+ * username: {user's username}
+ * password: {user's password}
+ * */
+router.post('/login', function (req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    if (!username || !password) {
+        return res.send({success: false, message: "Please include a username and password"});
+    }
+
+    AM.manualLogin(req.body.username, req.body.password, (err, user) => {
+        if (err) {
+            var errorMessage = 'Invalid password, if you forgot your password you can reset it by clicking the forgot link.';
+            if (err == 'user-not-found') {
+                errorMessage = 'User not found, please signup for an account if you would like to use the system';
+            }
+            return res.send({success: false, message: errorMessage});
         } else {
-            return res.send({status: 401, message: "You're not logged in"});
+            const token = jwt.sign({
+                id: user.id
+            }, config.secret, {expiresIn: config.expiresIn});
+            user.password = undefined;
+            user.emailVerificationCode = undefined;
+            return res.send({
+                success: true,
+                message: "success",
+                token: "JWT " + token,
+                user: user
+            });
         }
     });
+});
 
-    /**
-     * request that handles the login of the user
-     *
-     * in the post body include the following
-     * username: {user's username}
-     * password: {user's password}
-     * */
-    router.post('/login', function (req, res, next) {
-        passport.authenticate('login', function (err, user, info) {
-            if (err)
-                return next(err);
-            if (!user)
-                return res.status(202).send({status: 202, message: info.message ? info.message : info});
+/**
+ * request that handles the signup of the user
+ *
+ * in the post body include the following
+ *
+ * firstName: {user's first name}
+ * lastName: {user's last name}
+ * email: {user's email}
+ * username: {user's username}
+ * password: {user's password}
+ * */
+router.post('/signup', function (req, res, next) {
+    console.log(req.body);
+    var username = req.body.username;
+    var password = req.body.password;
+    var reqEmail = req.body.email;
+    var firstName = req.body.firstName;
+    var lastName = req.body.lastName;
+    var reqPhone = req.body.phone;
 
-            req.logIn(user, function (err) {
-                if (err) {
-                    return next(err);
-                }
-                return res.status(200).send({status: 200, message: info, user: user});
-            });
-        })(req, res, next);
-    });
+    if (!username || !password || !reqPhone || !reqEmail || !lastName || !firstName) {
+        return res.send({
+            success: false,
+            message: 'Please include username, password, email, phone, firstName and lastName'
+        });
+    }
+    if (!validator.validEmail(reqEmail)) {
+        return res.send({
+            success: false,
+            message: 'Invalid email, please enter a valid email and try again'
+        });
+    }
+    if (!validator.validPhone(reqPhone)) {
+        return res.send({
+            success: false,
+            message: 'Invalid phone number, please enter a valid 10 digit phone number and try again'
+        });
+    }
+    if (!validator.validUsername(username)) {
+        return res.send({
+            success: false,
+            message: 'Username must be letters numbers and may contain dashes and underscores.'
+        });
+    }
+    if (!validator.validPassword(password)) {
+        return res.send({
+            success: false,
+            message: 'The password must be 8 characters long with a number, letter, and one unique character (ex. !#$%&? ")'
+        });
+    }
 
-    /**
-     * request that handles the signup of the user
-     *
-     * in the post body include the following
-     *
-     * firstName: {user's first name}
-     * lastName: {user's last name}
-     * email: {user's email}
-     * username: {user's username}
-     * password: {user's password}
-     * */
-    router.post('/signup', function (req, res, next) {
-        console.log("signup");
-        passport.authenticate('signup', function (err, user, info) {
-            if (err) {
-                return next(err);
-            }
-            if (!user) {
-                return res.status(202).send({status: 202, message: info.message ? info.message : info});
-            }
-
-            req.logIn(user, function (err) {
-                if (err) {
-                    return next(err);
-                }
-                user.password = undefined;
-                return res.status(200).send({status: 200, message: info, user: user});
-
-            });
-        })(req, res, next);
-    });
-
-    //user log out
-    router.get('/logout', function (req, res) {
-        if (req.isAuthenticated()) {
-            req.logout();
-            return res.status(200).send({status: 200, message: "User logged out successfully"});
+    AM.addNewAccount({
+        username: username,
+        password: password,
+        first: firstName,
+        last: lastName,
+        email: reqEmail,
+        phone: reqPhone
+    }, (err, user) => {
+        if (err) {
+            return res.send({success: false, message: err.toString()});
         } else {
-            return res.status(401).send({status: 401, message: "Not logged in"});
+            user.password = undefined;
+            user.emailVerificationCode = undefined;
+            const token = jwt.sign({
+                id: user.id,
+                first: user.first,
+                username: user.username
+            }, config.secret, {expiresIn: config.expiresIn});
+            return res.send({
+                success: true,
+                message: "success",
+                user: user,
+                token: "JWT " + token
+            });
         }
     });
-    return router;
-};
+});
+
+module.exports = router;

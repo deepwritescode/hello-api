@@ -1,5 +1,5 @@
 # hello-api
-A simple REST api built on nodejs with a mysql database, redis session store, and passport authentication
+A simple REST api built on nodejs with a mysql database, using JWT for authenticating
 
 ## Install the essentials
 
@@ -14,9 +14,12 @@ install the dependencies `npm install`
 then run `npm start` to start the server
 
 # Sequelize
-
 This framework makes it really easy for you to write queries and get data directly from the database... yea so no more SQL queries... 
 you can check out the docs [here](http://docs.sequelizejs.com/en/latest/docs/getting-started/#your-first-query)
+
+# Authentication
+The endpoints are authenticated using JWT tokens, when you make a post to the login route, you'll get back a Token. 
+Add that token to the Authorization header of the request and passport will handle the rest. 
 
 ## Adding stuff??
 Out of the box, this code will let you login, signup, and that's all, but you can add more features later
