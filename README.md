@@ -8,7 +8,7 @@ install nodejs [here](https://nodejs.org/en/download/package-manager/) if you al
 install mysql [here](https://dev.mysql.com/downloads/)
 
 # Getting started
-Clone the repo `git clone https://github.com/deep7176/hello-api.git`
+Clone the repo `git clone https://github.com/thenoblesavage/hello-api.git`
 
 install the dependencies `npm install` 
 then run `npm start` to start the server
